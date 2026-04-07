@@ -1,0 +1,12 @@
+Decryptor/
+x64/
+.vs/
+*.user
+*.suo
+*.pdb
+*.obj
+*.iobj
+*.ipdb
+*.lib
+*.exp
+ChromiumDecryptor.slnx
