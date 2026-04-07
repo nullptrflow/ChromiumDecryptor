@@ -16,14 +16,13 @@ jobs:
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v2
 
-    - name: Restore NuGet packages
-      run: msbuild ChromiumDecryptor.sln /t:Restore /p:Configuration=Release /p:Platform=x64
-
     - name: Build
       run: msbuild ChromiumDecryptor.sln /p:Configuration=Release /p:Platform=x64 /t:Build /p:OutputPath=Decryptor/
 
-    - name: Upload artifact
-      uses: actions/upload-artifact@v4
+    - name: Upload Release Asset
+      uses: softprops/action-gh-release@v2
       with:
-        name: ChromiumDecryptor
-        path: Decryptor/ChromiumDecryptor.dll
+        files: Decryptor/ChromiumDecryptor.dll
+        generate_release_notes: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
