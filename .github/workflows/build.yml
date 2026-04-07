@@ -21,6 +21,9 @@ jobs:
     - name: Build
       run: msbuild ChromiumDecryptor.sln /p:Configuration=Release /p:Platform=x64 /t:Build
 
+    - name: Copy DLL
+      run: Copy-Item -Path "Decryptor/ChromiumDecryptor.dll" -Destination "."
+
     - name: Get version
       id: version
       run: |
@@ -34,5 +37,5 @@ jobs:
       uses: softprops/action-gh-release@v2
       with:
         tag_name: "v${{ steps.version.outputs.version }}"
-        files: ${{ github.workspace }}/../Decryptor/ChromiumDecryptor.dll
+        files: ChromiumDecryptor.dll
         body: "ChromiumDecryptor - Decrypt Chromium browser master keys"
