@@ -19,7 +19,18 @@ jobs:
       uses: microsoft/setup-msbuild@v2
 
     - name: Build
-      run: msbuild ChromiumDecryptor.sln /p:Configuration=Release /p:Platform=x64 /t:Build /p:OutDir=bin\
+      run: msbuild ChromiumDecryptor.sln /p:Configuration=Release /p:Platform=x64 /t:Build
+
+    - name: Find DLL
+      id: find
+      run: |
+        $dll = Get-ChildItem -Recurse -Filter "ChromiumDecryptor.dll" | Where-Object { $_.Name -eq "ChromiumDecryptor.dll" } | Select-Object -First 1
+        if ($dll) {
+          Write-Host "Found DLL: $($dll.FullName)"
+          Write-Host "dll_path=$($dll.FullName)" >> $env:GITHUB_OUTPUT
+        } else {
+          Write-Host "DLL not found"
+        }
 
     - name: Get version
       id: version
@@ -31,8 +42,9 @@ jobs:
       run: git tag "v${{ steps.version.outputs.version }}"
 
     - name: Upload Release Asset
+      if: steps.find.outputs.dll_path
       uses: softprops/action-gh-release@v2
       with:
         tag_name: "v${{ steps.version.outputs.version }}"
-        files: bin/ChromiumDecryptor.dll
+        files: ${{ steps.find.outputs.dll_path }}
         body: "ChromiumDecryptor - Decrypt Chromium browser master keys"
