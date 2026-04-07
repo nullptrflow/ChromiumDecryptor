@@ -19,7 +19,7 @@ jobs:
       uses: microsoft/setup-msbuild@v2
 
     - name: Build
-      run: msbuild ChromiumDecryptor.sln /p:Configuration=Release /p:Platform=x64 /t:Build /p:OutDir=Decryptor/
+      run: msbuild ChromiumDecryptor.sln /p:Configuration=Release /p:Platform=x64 /t:Build /p:OutDir=bin\
 
     - name: Get version
       id: version
@@ -34,5 +34,5 @@ jobs:
       uses: softprops/action-gh-release@v2
       with:
         tag_name: "v${{ steps.version.outputs.version }}"
-        files: Decryptor/ChromiumDecryptor.dll
+        files: bin/ChromiumDecryptor.dll
         body: "ChromiumDecryptor - Decrypt Chromium browser master keys"
