@@ -22,7 +22,7 @@ jobs:
       run: msbuild ChromiumDecryptor.sln /p:Configuration=Release /p:Platform=x64 /t:Build
 
     - name: Copy DLL
-      run: Copy-Item -Path "Decryptor/ChromiumDecryptor.dll" -Destination "."
+      run: Copy-Item -Path "../Decryptor/ChromiumDecryptor.dll" -Destination "."
 
     - name: Get version
       id: version
