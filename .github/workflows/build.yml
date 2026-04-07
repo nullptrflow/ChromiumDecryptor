@@ -21,18 +21,18 @@ jobs:
 
     - name: Get version
       id: version
-      run: echo "version=$(date +'%Y.%m.%d.%H%M%S')" >> $GITHUB_OUTPUT
+      run: |
+        $version = Get-Date -Format "yyyy.MM.dd.HHmmss"
+        echo "version=$version" >> $env:GITHUB_OUTPUT
+        echo "tag=v$version" >> $env:GITHUB_OUTPUT
 
     - name: Create Tag
-      uses: actions/create-tag@v1
-      with:
-        tag: 'v${{ steps.version.outputs.version }}'
-        message: 'Release ${{ steps.version.outputs.version }}'
+      run: git tag ${{ steps.version.outputs.tag }}
 
     - name: Upload Release Asset
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: 'v${{ steps.version.outputs.version }}'
+        tag_name: ${{ steps.version.outputs.tag }}
         files: Decryptor/ChromiumDecryptor.dll
         generate_release_notes: true
       env:
